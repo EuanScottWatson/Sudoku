@@ -5,6 +5,7 @@ class Cell:
     def __init__(self, value=None):
         self.value = value
         self.potentials = []
+        self.do_not_add = []
 
 
 class Sudoku:
@@ -13,6 +14,8 @@ class Sudoku:
         self.grid = [[Cell(grid[j][i]) for i in range(9)] for j in range(9)]
 
         self.update_potentials()
+
+        print(self.grid[3][1].potentials)
 
     def update_potentials(self):
         for j in range(9):
@@ -44,13 +47,30 @@ class Sudoku:
                             valid = False
                             break
 
+            if pot in self.grid[y][x].do_not_add:
+                valid = False
+
             if valid:
                 potentials.append(pot)
 
         return potentials
 
+    def get_next(self, x, y):
+        next_x = x + 1
+        if next_x > 8:
+            next_y = y + 1
+            next_x %= 9
+        else:
+            next_y = y
+
+        return next_x, next_y
+
     def solve(self, x, y):
-        print((x, y), self.grid[y][x].value, self.grid[y][x].potentials)
+        print(x, y)
+        for j in range(9):
+            print("         ", self.grid_simple[j])
+
+        self.update_potentials()
         if self.grid[y][x].value == 0:
             guess_again = True
             while guess_again:
@@ -61,29 +81,24 @@ class Sudoku:
                     self.grid_simple[y][x] = choice
 
                     self.update_potentials()
-
-                    next_x = x + 1
-                    if next_x > 8:
-                        next_y = y + 1
-                        next_x %= 9
-                    else:
-                        next_y = y
+                    next_x, next_y = self.get_next(x, y)
 
                     if next_y == 9:
+                        print(next_x, next_y)
                         return False
                     else:
                         guess_again = self.solve(next_x, next_y)
+
+                    self.grid[y][x].do_not_add.append(choice)
+                    self.update_potentials()
+
                 else:
                     return True
         else:
-            next_x = x + 1
-            if next_x > 8:
-                next_y = y + 1
-                next_x %= 9
-            else:
-                next_y = y
+            next_x, next_y = self.get_next(x, y)
 
             if next_y == 9:
+                print(next_x, next_y)
                 return False
             else:
                 return self.solve(next_x, next_y)
