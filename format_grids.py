@@ -1,3 +1,6 @@
+# Given a text file that has sudoku grids written as 81 digits, it will format them in the grid type.
+# Then copy over the output into the sudoku-text.py file.
+
 file = open("sudoku_grids", "r")
 contents = file.read()
 
@@ -14,10 +17,5 @@ for value in contents:
 
     if len(current_grid[y]) == 9:
         y = (y + 1) % 9
-
-for grid in grids:
-    for j in range(9):
-        print(grid[j])
-    print("")
 
 print(grids)
